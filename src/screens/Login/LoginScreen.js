@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -16,6 +15,7 @@ import { createLoginStyles } from './styles';
 import { useLoginLogic } from './login.logic';
 import { useTheme } from '../../theme/useTheme';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { TextBold, TextRegular } from '../../components/Typography';
 
 export function LoginScreen({ onLoginSuccess, navigation }) {
   const insets = useSafeAreaInsets();
@@ -46,10 +46,12 @@ export function LoginScreen({ onLoginSuccess, navigation }) {
               <View style={styles.logoWrap}>
                 <LogIn size={36} color="#fff" strokeWidth={2} />
               </View>
-              <Text style={styles.title}>Selamat datang</Text>
-              <Text style={styles.subtitle}>
+              <TextBold size={28} style={styles.title}>
+                Selamat datang
+              </TextBold>
+              <TextRegular size={16} style={styles.subtitle}>
                 Masuk ke akun Anda. Token berlaku selama 1 jam.
-              </Text>
+              </TextRegular>
             </View>
             <ThemeToggle variant="icon" />
           </View>

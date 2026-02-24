@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -16,6 +15,7 @@ import { createRegisterStyles } from './styles';
 import { useRegisterLogic } from './register.logic';
 import { useTheme } from '../../theme/useTheme';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { TextBold, TextRegular } from '../../components/Typography';
 
 export function RegisterScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -55,11 +55,13 @@ export function RegisterScreen({ navigation }) {
               <UserPlus size={32} color={colors.primary} />
               <ThemeToggle variant="icon" />
             </View>
-            <Text style={[styles.title, { marginTop: 12 }]}>Buat akun</Text>
-            <Text style={styles.subtitle}>
+            <TextBold size={28} style={[styles.title, { marginTop: 12 }]}>
+              Buat akun
+            </TextBold>
+            <TextRegular size={14} style={styles.subtitle}>
               Email harus unik. Password wajib berisi huruf besar, huruf kecil,
               angka, dan symbol.
-            </Text>
+            </TextRegular>
           </View>
 
           <View style={styles.form}>

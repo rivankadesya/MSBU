@@ -1,17 +1,12 @@
 import React, { useMemo } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
-} from 'react-native';
+import { View, ActivityIndicator, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronLeft } from 'lucide-react-native';
 import { createPostDetailStyles } from './styles';
 import { usePostDetailLogic } from './postDetail.logic';
 import { useTheme } from '../../theme/useTheme';
 import { ThemeToggle } from '../../components/ThemeToggle';
+import { AppHeader } from '../../components/AppHeader';
+import { TextRegular, TextBold, TextMedium } from '../../components/Typography';
 
 export function PostDetailScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
@@ -22,25 +17,14 @@ export function PostDetailScreen({ navigation, route }) {
   const { state, actions } = usePostDetailLogic(postId);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => navigation?.goBack?.()}
-          activeOpacity={0.8}
-        >
-          <ChevronLeft size={20} color={colors.text} />
-        </TouchableOpacity>
-        <View style={styles.headerTextWrap}>
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            Detail Post
-          </Text>
-          <Text style={styles.headerSubtitle} numberOfLines={1}>
-            ID: {String(postId)}
-          </Text>
-        </View>
-        <ThemeToggle variant="icon" />
-      </View>
+    <View style={styles.container}>
+      <AppHeader
+        showBack
+        onBack={() => navigation?.goBack?.()}
+        title="Detail Post"
+        subtitle={`ID: ${String(postId)}`}
+        right={<ThemeToggle variant="icon" />}
+      />
 
       {state.loading ? (
         <View style={styles.center}>
@@ -63,23 +47,33 @@ export function PostDetailScreen({ navigation, route }) {
           ]}
           ListHeaderComponent={
             <View style={styles.card}>
-              <Text style={styles.title}>{state.post?.title}</Text>
-              <Text style={styles.body}>{state.post?.body}</Text>
+              <TextBold size={18} style={styles.title}>
+                {state.post?.title}
+              </TextBold>
+              <TextRegular size={14} style={styles.body}>
+                {state.post?.body}
+              </TextRegular>
             </View>
           }
           ListHeaderComponentStyle={{ marginBottom: 8 }}
           ListEmptyComponent={
             <View style={styles.center}>
-              <Text style={styles.headerSubtitle}>Tidak ada komentar.</Text>
+              <TextRegular size={13} style={styles.headerSubtitle}>
+                Tidak ada komentar.
+              </TextRegular>
             </View>
           }
           renderItem={({ item }) => (
             <View style={styles.comment}>
-              <Text style={styles.commentEmail}>{item.email}</Text>
-              <Text style={styles.commentName} numberOfLines={1}>
+              <TextBold size={12} style={styles.commentEmail}>
+                {item.email}
+              </TextBold>
+              <TextMedium size={13} style={styles.commentName} numberOfLines={1}>
                 {item.name}
-              </Text>
-              <Text style={styles.commentBody}>{item.body}</Text>
+              </TextMedium>
+              <TextRegular size={13} style={styles.commentBody}>
+                {item.body}
+              </TextRegular>
             </View>
           )}
         />
