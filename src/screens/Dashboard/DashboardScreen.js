@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Pressable, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ChevronRight, LogOut, LayoutTemplate } from 'lucide-react-native';
+import { ChevronRight, LogOut, LayoutTemplate, ShoppingBag, User } from 'lucide-react-native';
 import { createDashboardStyles } from './styles';
 import { useDashboardLogic } from './dashboard.logic';
 import { getCurrentUserEmail } from '../../services/auth/userStorage';
@@ -22,23 +22,21 @@ export function DashboardScreen({ navigation, onLogout }) {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-            <LayoutTemplate size={18} color={colors.primary} />
+            <ShoppingBag size={18} color={colors.primary} />
             <TextBold size={20} style={{ marginLeft: 8 }}>
-              Dashboard
+              Store Catalog
             </TextBold>
           </View>
           <TextMedium size={13} style={styles.headerSubtitle}>
-            {email ? `Login sebagai ${email}` : 'Data dari JSONPlaceholder'}
+            {email ? `Welcome, ${email.split('@')[0]}` : 'Discover amazing products'}
           </TextMedium>
         </View>
         <ThemeToggle variant="icon" />
-        <TouchableOpacity style={styles.logoutBtn} onPress={onLogout}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <LogOut size={14} color="#fff" />
-            <TextMedium size={13} style={styles.logoutText}>
-              Keluar
-            </TextMedium>
-          </View>
+        <TouchableOpacity 
+          style={[styles.logoutBtn, { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border }]} 
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <User size={20} color={colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -50,7 +48,7 @@ export function DashboardScreen({ navigation, onLogout }) {
         <View style={styles.center}>
           <Text style={styles.errorText}>{state.error}</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={actions.retry}>
-            <Text style={styles.retryText}>Coba lagi</Text>
+            <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -71,19 +69,22 @@ export function DashboardScreen({ navigation, onLogout }) {
               ]}
               onPress={() => navigation?.navigate?.('PostDetail', { postId: item.id })}
             >
-              <View style={styles.cardTopRow}>
-                <View style={styles.badge}>
-                  <TextMedium size={12} style={styles.badgeText}>
-                    #{String(item.id)}
-                  </TextMedium>
-                </View>
-                <ChevronRight size={18} color={colors.muted} />
+              <Image 
+                source={{ uri: item.thumbnail }} 
+                style={styles.cardImage} 
+                resizeMode="cover"
+              />
+              <View style={styles.categoryBadge}>
+                <Text style={styles.categoryText}>{item.category}</Text>
               </View>
-              <TextBold size={16} style={styles.cardTitle} numberOfLines={2}>
+              <TextBold size={17} style={styles.cardTitle} numberOfLines={1}>
                 {item.title}
               </TextBold>
-              <TextRegular size={14} style={styles.cardBody} numberOfLines={3}>
-                {item.body}
+              <TextBold size={18} style={styles.cardPrice}>
+                ${item.price}
+              </TextBold>
+              <TextRegular size={14} style={styles.cardBody} numberOfLines={2}>
+                {item.description}
               </TextRegular>
             </Pressable>
           )}

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, FlatList, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPostDetailStyles } from './styles';
 import { usePostDetailLogic } from './postDetail.logic';
@@ -21,8 +21,8 @@ export function PostDetailScreen({ navigation, route }) {
       <AppHeader
         showBack
         onBack={() => navigation?.goBack?.()}
-        title="Detail Post"
-        subtitle={`ID: ${String(postId)}`}
+        title="Product Detail"
+        subtitle={state.post?.category}
         right={<ThemeToggle variant="icon" />}
       />
 
@@ -34,45 +34,64 @@ export function PostDetailScreen({ navigation, route }) {
         <View style={styles.center}>
           <Text style={styles.errorText}>{state.error}</Text>
           <TouchableOpacity style={styles.retryBtn} onPress={actions.retry}>
-            <Text style={styles.retryText}>Coba lagi</Text>
+            <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <FlatList
           data={state.comments}
-          keyExtractor={(item) => String(item.id)}
+          keyExtractor={(item, index) => `${item.reviewerEmail}-${index}`}
           contentContainerStyle={[
             styles.content,
             { paddingBottom: 24 + insets.bottom },
           ]}
           ListHeaderComponent={
-            <View style={styles.card}>
-              <TextBold size={18} style={styles.title}>
+            <View>
+              <Image 
+                source={{ uri: state.post?.images?.[0] || state.post?.thumbnail }} 
+                style={styles.productImage}
+                resizeMode="contain"
+              />
+              <View style={styles.metaRow}>
+                <View style={styles.metaBox}>
+                  <Text style={styles.metaText}>{state.post?.brand}</Text>
+                </View>
+                <View style={[styles.metaBox, { backgroundColor: '#fbbf2420' }]}>
+                  <Text style={[styles.metaText, { color: '#fbbf24' }]}>⭐ {state.post?.rating}</Text>
+                </View>
+              </View>
+              <TextBold style={styles.title}>
                 {state.post?.title}
               </TextBold>
-              <TextRegular size={14} style={styles.body}>
-                {state.post?.body}
+              <TextBold style={styles.priceText}>
+                ${state.post?.price}
+              </TextBold>
+              <TextRegular style={styles.body}>
+                {state.post?.description}
               </TextRegular>
+              
+              <Text style={styles.sectionTitle}>Reviews ({state.comments.length})</Text>
             </View>
           }
-          ListHeaderComponentStyle={{ marginBottom: 8 }}
           ListEmptyComponent={
             <View style={styles.center}>
               <TextRegular size={13} style={styles.headerSubtitle}>
-                Tidak ada komentar.
+                No reviews yet.
               </TextRegular>
             </View>
           }
           renderItem={({ item }) => (
             <View style={styles.comment}>
-              <TextBold size={12} style={styles.commentEmail}>
-                {item.email}
-              </TextBold>
-              <TextMedium size={13} style={styles.commentName} numberOfLines={1}>
-                {item.name}
-              </TextMedium>
-              <TextRegular size={13} style={styles.commentBody}>
-                {item.body}
+              <View style={styles.commentHeader}>
+                <TextBold style={styles.commentUser}>
+                  {item.reviewerName}
+                </TextBold>
+                <Text style={styles.commentRating}>
+                  {'⭐'.repeat(item.rating)}
+                </Text>
+              </View>
+              <TextRegular style={styles.commentBody}>
+                {item.comment}
               </TextRegular>
             </View>
           )}

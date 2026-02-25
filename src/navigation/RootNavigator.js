@@ -7,6 +7,8 @@ import { isTokenValid } from '../services/auth/tokenStorage';
 import { RegisterScreen } from '../screens/Register';
 import { DashboardScreen } from '../screens/Dashboard';
 import { PostDetailScreen } from '../screens/PostDetail';
+import { ProfileScreen } from '../screens/Profile';
+import { PortfolioScreen } from '../screens/Portfolio';
 import { logout } from '../services/auth/authService';
 import { useTheme } from '../theme/useTheme';
 import { createNavigationTheme } from '../theme/navigationTheme';
@@ -64,12 +66,14 @@ export function RootNavigator() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
           <>
-            <Stack.Screen name="Dashboard">
+            <Stack.Screen name="Dashboard" component={DashboardScreen} />
+            <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+            <Stack.Screen name="Profile">
               {(props) => (
-                <DashboardScreen {...props} onLogout={handleLogout} />
+                <ProfileScreen {...props} onLogout={handleLogout} />
               )}
             </Stack.Screen>
-            <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+            <Stack.Screen name="Portfolio" component={PortfolioScreen} />
           </>
         ) : (
           <>

@@ -78,17 +78,43 @@ export function createDashboardStyles(colors) {
     fontWeight: '900',
     fontSize: 12,
   },
+  cardImage: {
+    width: '100%',
+    height: 160,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.background,
+    marginBottom: spacing.md,
+  },
   cardTitle: {
     fontSize: 16,
     fontWeight: '800',
     color: colors.text,
+    marginBottom: 4,
+  },
+  cardPrice: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: colors.primary,
     marginBottom: spacing.sm,
-    textTransform: 'capitalize',
   },
   cardBody: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 18,
+  },
+  categoryBadge: {
+    backgroundColor: colors.primary + '15', // Opacity 15%
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
+    alignSelf: 'flex-start',
+    marginBottom: spacing.xs,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.primary,
+    textTransform: 'uppercase',
   },
   center: {
     flex: 1,

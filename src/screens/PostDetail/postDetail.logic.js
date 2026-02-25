@@ -22,8 +22,7 @@ export function usePostDetailLogic(postId) {
     try {
       await load();
     } catch (e) {
-      const message =
-        e instanceof Error ? e.message : 'Gagal memuat detail.';
+      const message = e instanceof Error ? e.message : 'Failed to fetch product details.';
       setError(message);
     } finally {
       setLoading(false);

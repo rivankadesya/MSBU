@@ -18,8 +18,9 @@ export function useDashboardLogic() {
     try {
       await load();
     } catch (e) {
+      console.error('Fetch Dashboard Error:', e);
       const message =
-        e instanceof Error ? e.message : 'Gagal mengambil data dashboard.';
+        e instanceof Error ? e.message : 'Failed to load store catalog.';
       setError(message);
     } finally {
       setLoading(false);
@@ -40,12 +41,28 @@ export function useDashboardLogic() {
   }, [load]);
 
   useEffect(() => {
-    initialLoad();
+    let isMounted = true;
+    
+    const init = async () => {
+      // Tunggu sebentar untuk memastikan network stack di android ready setelah reload
+      await new Promise(r => setTimeout(r, 500));
+      if (isMounted) initialLoad();
+    };
+
+    init();
+    
+    return () => { isMounted = false; };
   }, [initialLoad]);
 
   return {
     state: { posts, loading, refreshing, error },
-    actions: { retry: initialLoad, refresh },
+    actions: { 
+      retry: initialLoad, 
+      refresh: async () => {
+        console.log('[Dashboard] Manual Refresh Triggered');
+        await refresh();
+      }
+    },
   };
 }
 

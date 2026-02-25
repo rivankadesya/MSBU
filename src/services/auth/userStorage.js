@@ -2,23 +2,14 @@ import { storage } from '../../config/storage';
 import { AUTH_KEYS } from '../../constants/auth';
 import { normalizeEmail } from '../../utils/validation';
 
-function safeParse(json, fallback) {
-  try {
-    return JSON.parse(json);
-  } catch {
-    return fallback;
-  }
-}
 
 export function getUsers() {
-  const raw = storage.getString(AUTH_KEYS.USERS);
-  if (!raw) return [];
-  const parsed = safeParse(raw, []);
-  return Array.isArray(parsed) ? parsed : [];
+  const users = storage.getArray(AUTH_KEYS.USERS);
+  return Array.isArray(users) ? users : [];
 }
 
 function setUsers(users) {
-  storage.setString(AUTH_KEYS.USERS, JSON.stringify(users));
+  storage.setArray(AUTH_KEYS.USERS, users);
 }
 
 export function registerUser({ email, password }) {
@@ -33,7 +24,7 @@ export function registerUser({ email, password }) {
   const user = {
     id: String(Date.now()),
     email: email.trim(),
-    password, // Demo only. Untuk produksi sebaiknya di-hash + disimpan aman.
+    password, 
     createdAt: Date.now(),
   };
 

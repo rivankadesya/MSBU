@@ -16,7 +16,6 @@ export function ThemeProvider({ children }) {
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const setThemeMode = useCallback((nextMode) => {
-    // Fade out → ganti tema → fade in
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: TRANSITION_DURATION / 2,

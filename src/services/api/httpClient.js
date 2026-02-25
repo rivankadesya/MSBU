@@ -2,41 +2,46 @@ import axios from 'axios';
 
 export const httpClient = axios.create({
   baseURL: 'https://dummyjson.com/',
-  timeout: 15000,
+  timeout: 30000, // Tingkatkan timeout ke 30 detik
   headers: {
     'Accept': 'application/json',
-    'User-Agent': 'MSBU-App/1.0',
+    'User-Agent': 'Axios/1.13.5 (MSBU-App; Android)',
+    'Connection': 'keep-alive',
     'Cache-Control': 'no-cache',
   },
 });
 
 httpClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`[API Success] ${response.config.method?.toUpperCase()} ${response.config.url}`);
+    return response;
+  },
   async (error) => {
-    const { config } = error;
-    if (!config || config.retry === 0) return Promise.reject(error);
-    config.__retryCount = config.__retryCount || 0;
-    const maxRetries = 2;
-    const isNetworkError = !error.response && error.request;
-    const isTimeout = error.code === 'ECONNABORTED';
-    if ((isNetworkError || isTimeout) && config.__retryCount < maxRetries) {
-      config.__retryCount += 1;
-      console.warn(`Retrying request (${config.__retryCount}/${maxRetries}):`, config.url);
-      const backoff = new Promise((resolve) => {
-        setTimeout(resolve, config.__retryCount * 1000);
-      });
-      
-      await backoff;
+    const { config, response, request, code } = error;
+    
+    // Log detail untuk debug di Metro Console
+    console.error(`[API Error] ${config?.method?.toUpperCase()} ${config?.url}`, {
+      status: response?.status,
+      code: code,
+      message: error.message
+    });
+
+    if (config && (code === 'ECONNABORTED' || !response) && (!config.__retryCount || config.__retryCount < 2)) {
+      config.__retryCount = (config.__retryCount || 0) + 1;
+      console.warn(`[API Retry] Attempt ${config.__retryCount} for ${config.url}`);
+      await new Promise(r => setTimeout(r, 1000 * config.__retryCount));
       return httpClient(config);
     }
 
     let msg = 'Unknown Error';
-    if (error.response) {
-      msg = `Server Error [${error.response.status}]`;
-    } else if (error.request) {
-      msg = 'Network Error: Koneksi tidak stabil. Timed out.';
+    if (response) {
+      msg = `Server Error [${response.status}]: ${response.data?.message || 'Terjadi kesalahan sistem.'}`;
+    } else if (code === 'ERR_NETWORK') {
+      msg = 'Network Error: Gagal terhubung ke server. Pastikan HP anda bisa akses dummyjson.com lewat browser.';
+    } else if (code === 'ECONNABORTED') {
+      msg = 'Request Timeout: Koneksi internet terlalu lambat.';
     } else {
-      msg = error.message;
+      msg = error.message || 'Gagal mengambil data.';
     }
     
     error.message = msg;
