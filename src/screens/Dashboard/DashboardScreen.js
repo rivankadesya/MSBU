@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, FlatList, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronRight, LogOut, LayoutTemplate } from 'lucide-react-native';
 import { createDashboardStyles } from './styles';

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPostDetailStyles } from './styles';
 import { usePostDetailLogic } from './postDetail.logic';
