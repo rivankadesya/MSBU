@@ -1,6 +1,5 @@
 export function isValidEmail(email) {
   if (!email) return false;
-  // Simple, practical email check (bukan RFC lengkap)
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
