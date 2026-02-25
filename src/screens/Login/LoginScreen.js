@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   KeyboardAvoidingView,
@@ -17,12 +16,12 @@ import { useLoginLogic } from './login.logic';
 import { useTheme } from '../../theme/useTheme';
 import { ThemeToggle } from '../../components/ThemeToggle';
 import { TextBold, TextRegular } from '../../components/Typography';
+import { FormInput } from '../../components/FormInput';
 
 export function LoginScreen({ onLoginSuccess, navigation }) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const styles = useMemo(() => createLoginStyles(colors), [colors]);
-  const [focused, setFocused] = useState({});
   const { state, actions } = useLoginLogic({
     onSuccess: onLoginSuccess,
   });
@@ -58,51 +57,32 @@ export function LoginScreen({ onLoginSuccess, navigation }) {
           </View>
 
           <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  focused.email && styles.inputFocused,
-                  state.error && styles.inputError,
-                ]}
-                placeholder="nama@email.com"
-                placeholderTextColor={colors.textSecondary}
-                value={state.email}
-                onChangeText={t => {
-                  actions.setEmail(t);
-                  actions.setError(null);
-                }}
-                onFocus={() => setFocused(f => ({ ...f, email: true }))}
-                onBlur={() => setFocused(f => ({ ...f, email: false }))}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                editable={!state.loading}
-              />
-            </View>
+            <FormInput
+              label="Email"
+              value={state.email}
+              onChangeText={t => {
+                actions.setEmail(t);
+                actions.setError(null);
+              }}
+              placeholder="nama@email.com"
+              keyboardType="email-address"
+              editable={!state.loading}
+              error={!!state.error}
+            />
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={[
-                  styles.input,
-                  focused.password && styles.inputFocused,
-                  state.error && styles.inputError,
-                ]}
-                placeholder="••••••••"
-                placeholderTextColor={colors.textSecondary}
-                value={state.password}
-                onChangeText={t => {
-                  actions.setPassword(t);
-                  actions.setError(null);
-                }}
-                onFocus={() => setFocused(f => ({ ...f, password: true }))}
-                onBlur={() => setFocused(f => ({ ...f, password: false }))}
-                secureTextEntry
-                editable={!state.loading}
-              />
-            </View>
+            <FormInput
+              label="Password"
+              value={state.password}
+              onChangeText={t => {
+                actions.setPassword(t);
+                actions.setError(null);
+              }}
+              placeholder="••••••••"
+              secureTextEntry
+              showPasswordToggle
+              editable={!state.loading}
+              error={!!state.error}
+            />
 
             {state.error ? (
               <Text style={styles.errorText}>{state.error}</Text>
@@ -150,6 +130,5 @@ export function LoginScreen({ onLoginSuccess, navigation }) {
 const localStyles = StyleSheet.create({
   keyboard: {
     flex: 1,
-    // background actual dari styles.container (themed)
   },
 });
