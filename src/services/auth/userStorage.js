@@ -2,21 +2,36 @@ import { storage } from '../../config/storage';
 import { AUTH_KEYS } from '../../constants/auth';
 import { normalizeEmail } from '../../utils/validation';
 
+const DEFAULT_ACCOUNT = {
+  id: 'default_admin',
+  email: 'msbu@gmail.com',
+  password: 'Password1!',
+  createdAt: 0,
+};
 
 export function getUsers() {
   const users = storage.getArray(AUTH_KEYS.USERS);
-  return Array.isArray(users) ? users : [];
+  const storedUsers = Array.isArray(users) ? users : [];
+
+  const filteredStored = storedUsers.filter(
+    u => normalizeEmail(u.email) !== normalizeEmail(DEFAULT_ACCOUNT.email),
+  );
+
+  return [DEFAULT_ACCOUNT, ...filteredStored];
 }
 
 function setUsers(users) {
-  storage.setArray(AUTH_KEYS.USERS, users);
+  const usersToSave = users.filter(
+    u => normalizeEmail(u.email) !== normalizeEmail(DEFAULT_ACCOUNT.email),
+  );
+  storage.setArray(AUTH_KEYS.USERS, usersToSave);
 }
 
 export function registerUser({ email, password }) {
   const users = getUsers();
   const normalized = normalizeEmail(email);
 
-  const exists = users.some((u) => normalizeEmail(u.email) === normalized);
+  const exists = users.some(u => normalizeEmail(u.email) === normalized);
   if (exists) {
     throw new Error('Email sudah terdaftar. Gunakan email lain.');
   }
@@ -24,7 +39,7 @@ export function registerUser({ email, password }) {
   const user = {
     id: String(Date.now()),
     email: email.trim(),
-    password, 
+    password,
     createdAt: Date.now(),
   };
 
@@ -36,7 +51,7 @@ export function validateLogin({ email, password }) {
   const users = getUsers();
   const normalized = normalizeEmail(email);
 
-  const user = users.find((u) => normalizeEmail(u.email) === normalized);
+  const user = users.find(u => normalizeEmail(u.email) === normalized);
   if (!user) throw new Error('Akun tidak ditemukan. Silakan register dulu.');
   if (user.password !== password) throw new Error('Password salah.');
 
